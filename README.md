@@ -1,5 +1,5 @@
 # Critical Path Method
 
-###License
+### License
 
 [MIT License](LICENSE)
