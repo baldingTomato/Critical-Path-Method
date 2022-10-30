@@ -1,1 +1,5 @@
-# CPM
+# Critical Path Method
+
+### License
+
+[MIT License](LICENSE.txt)
