@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string>
 #include <sstream>
+//#include <algorithm>
 
 struct Node
 {
@@ -89,25 +90,27 @@ void ReadNetwork(std::vector<Node> &nodes){
 
 }
 
-void EstablishOrder(std::vector<Node>& nodes) {
+void EstablishOrder(std::vector<Node>& nodes){
+
+    int index = 0;
 
     for(Node node : nodes){
 
         if(node.precedents.empty()){
 
-            node.isStarting = true;
+            nodes.at(index).isStarting = true;
             //std::cout << node.name;
 
         }
 
         if(node.consequents.empty()){
 
-            node.isEnding = true;
+            nodes.at(index).isEnding = true;
             //std::cout << node.name;
 
         }
 
-        //std::cout << node.name << " " << node.isStarting << " " << node.isEnding << std::endl;
+        index++;
 
     }
 
@@ -115,11 +118,11 @@ void EstablishOrder(std::vector<Node>& nodes) {
 
 void PrintNetwork(std::vector<Node> &nodes){
 
-    for (Node n : nodes) {
+    for(Node n : nodes){
 
         std::cout << n.name << " -> duration: " << n.duration;
 
-        if (!n.precedents.empty()) {
+        if(!n.precedents.empty()){
 
             std::cout << ", precedents: ";
 
@@ -131,11 +134,11 @@ void PrintNetwork(std::vector<Node> &nodes){
 
         }
 
-        if (!n.consequents.empty()){
+        if(!n.consequents.empty()){
 
             std::cout << ", consequents: ";
 
-            for (std::string c : n.consequents) {
+            for(std::string c : n.consequents){
 
                 std::cout << c << " ";
 
@@ -144,6 +147,139 @@ void PrintNetwork(std::vector<Node> &nodes){
         }
 
         std::cout << std::endl;
+
+    }
+
+}
+
+int MaxEF(std::vector<std::string> precs, std::vector<Node>& nodes){
+
+    int max = 0;
+
+    for(std::string label : precs){
+
+        for(Node n : nodes){
+
+            if(n.name == label && n.ef > max){
+
+                max = n.ef;
+
+            }
+
+        }
+
+    }
+
+    return max;
+}
+
+void ForwardPass(std::vector<Node>& nodes){
+
+    int index = 0;
+
+    // calculate earliest start and earliest finish for starting nodes
+    for(Node n : nodes){
+
+        if (n.isStarting == true) {
+
+            nodes.at(index).es = 0;
+            nodes.at(index).ef = nodes.at(index).duration;
+
+        }
+
+        index++;
+
+    }
+
+    index = 0;
+
+    // calculate earliest start and earliest finish for ending nodes
+    for(Node n : nodes){
+
+        if (n.isStarting == false) {
+
+            nodes.at(index).es = MaxEF(n.precedents, nodes);
+            nodes.at(index).ef = nodes.at(index).es + nodes.at(index).duration;
+
+        }
+
+        index++;
+
+    }
+
+}
+
+int MaxLF(std::vector<std::string> cons, std::vector<Node>& nodes) {
+
+    int max = 0;
+
+    for(std::string label : cons){
+
+        for(Node n : nodes){
+
+            if(n.name == label && n.ls > max){
+
+                max = n.ls;
+
+            }
+
+        }
+
+    }
+
+    return max;
+}
+
+void BackwardPass(std::vector<Node>& nodes){
+
+    int max_ef = 0;
+
+    // calculate latest start and latest finish for starting nodes
+    for(Node n : nodes){
+
+        if(n.isEnding == true && n.ef > max_ef){
+
+            max_ef = n.ef;
+
+        }
+
+    }
+
+    int index = nodes.size()-1;
+
+    for(Node n : nodes){
+
+        if(n.isEnding == true){
+
+            nodes.at(index).lf = max_ef;
+            nodes.at(index).ls = nodes.at(index).lf - nodes.at(index).duration;
+
+        }
+
+        index++;
+
+    }
+
+    for(int index = nodes.size() - 1; index >= 0; index--){
+
+
+
+    }
+
+    index = nodes.size()-1;
+
+    // calculate latest start and latest finish for ending nodes
+    for(Node n : nodes){
+
+        if(n.isEnding == false){
+
+            nodes.at(index).lf = MaxLF(n.consequents, nodes);
+            nodes.at(index).ls = nodes.at(index).lf - nodes.at(index).duration;
+
+        }
+
+        index--;
+
 
     }
 
@@ -158,6 +294,41 @@ int main(){
     PrintNetwork(nodes);
 
     EstablishOrder(nodes);
+
+    ForwardPass(nodes);
+    BackwardPass(nodes);
+
+    for (Node n : nodes) {
+
+        std::cout << n.name << " -> duration: " << n.duration << " es: " << n.es << " ef: " << n.ef << " ls: " << n.ls << " lf: " << n.lf;;// << "--- " << n.isEnding << n.isStarting;
+
+        if (!n.precedents.empty()) {
+
+            std::cout << ", precedents: ";
+
+            for (std::string p : n.precedents) {
+
+                std::cout << p << " ";
+
+            }
+
+        }
+
+        if (!n.consequents.empty()) {
+
+            std::cout << ", consequents: ";
+
+            for (std::string c : n.consequents) {
+
+                std::cout << c << " ";
+
+            }
+
+        }
+
+        std::cout << std::endl;
+
+    }
 
     return 0;
 }
