@@ -258,6 +258,7 @@ void BackwardPass(std::vector<Node>& nodes){
 
         index++;
 
+
     }
 
     for(int index = nodes.size() - 1; index >= 0; index--){
