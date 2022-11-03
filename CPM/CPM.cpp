@@ -245,7 +245,7 @@ void BackwardPass(std::vector<Node>& nodes){
 
     }
 
-    int index = nodes.size()-1;
+    int index = 0;
 
     for(Node n : nodes){
 
@@ -258,29 +258,17 @@ void BackwardPass(std::vector<Node>& nodes){
 
         index++;
 
-
     }
-
-    for(int index = nodes.size() - 1; index >= 0; index--){
-
-
-
-    }
-
-    index = nodes.size()-1;
 
     // calculate latest start and latest finish for ending nodes
-    for(Node n : nodes){
+    for(int index = nodes.size() - 1; index >= 0; index--){
 
-        if(n.isEnding == false){
+        if(nodes.at(index).isEnding == false){
 
-            nodes.at(index).lf = MaxLF(n.consequents, nodes);
+            nodes.at(index).lf = MaxLF(nodes.at(index).consequents, nodes);
             nodes.at(index).ls = nodes.at(index).lf - nodes.at(index).duration;
 
         }
-
-        index--;
-
 
     }
 
@@ -298,38 +286,6 @@ int main(){
 
     ForwardPass(nodes);
     BackwardPass(nodes);
-
-    for (Node n : nodes) {
-
-        std::cout << n.name << " -> duration: " << n.duration << " es: " << n.es << " ef: " << n.ef << " ls: " << n.ls << " lf: " << n.lf;;// << "--- " << n.isEnding << n.isStarting;
-
-        if (!n.precedents.empty()) {
-
-            std::cout << ", precedents: ";
-
-            for (std::string p : n.precedents) {
-
-                std::cout << p << " ";
-
-            }
-
-        }
-
-        if (!n.consequents.empty()) {
-
-            std::cout << ", consequents: ";
-
-            for (std::string c : n.consequents) {
-
-                std::cout << c << " ";
-
-            }
-
-        }
-
-        std::cout << std::endl;
-
-    }
 
     return 0;
 }
