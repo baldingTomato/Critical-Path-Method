@@ -287,5 +287,7 @@ int main(){
     ForwardPass(nodes);
     BackwardPass(nodes);
 
+    int i = 0;
+
     return 0;
 }
