@@ -130,7 +130,8 @@
     <ClCompile Include="CPM.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="network.txt" />
+    <Text Include="network1.txt" />
+    <Text Include="network2.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

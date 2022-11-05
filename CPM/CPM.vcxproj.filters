@@ -20,7 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="network.txt">
+    <Text Include="network1.txt">
+      <Filter>Pliki źródłowe</Filter>
+    </Text>
+    <Text Include="network2.txt">
       <Filter>Pliki źródłowe</Filter>
     </Text>
   </ItemGroup>

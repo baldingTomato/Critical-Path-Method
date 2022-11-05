@@ -42,7 +42,7 @@ Node CreateNode(std::string label, int duration, std::vector<std::string> preced
 
 void ReadNetwork(std::vector<Node> &nodes){
 
-    std::ifstream input_file("network.txt");
+    std::ifstream input_file("network1.txt");
     std::string line;
     std::string label;
     std::string prec;
@@ -211,15 +211,15 @@ void ForwardPass(std::vector<Node>& nodes){
 
 int MaxLF(std::vector<std::string> cons, std::vector<Node>& nodes) {
 
-    int max = 0;
+    int min = 1000;
 
     for(std::string label : cons){
 
         for(Node n : nodes){
 
-            if(n.name == label && n.ls > max){
+            if(n.name == label && n.ls < min){
 
-                max = n.ls;
+                min = n.ls;
 
             }
 
@@ -227,7 +227,7 @@ int MaxLF(std::vector<std::string> cons, std::vector<Node>& nodes) {
 
     }
 
-    return max;
+    return min;
 }
 
 void BackwardPass(std::vector<Node>& nodes){
@@ -274,6 +274,69 @@ void BackwardPass(std::vector<Node>& nodes){
 
 }
 
+void FindCriticalPath(std::vector<Node>& nodes){
+
+    int index = 0;
+
+    for(Node n : nodes){
+
+        if(n.es - n.ls == 0){
+
+            nodes.at(index).isCritical = true;
+
+        }
+
+        index++;
+
+    }
+
+}
+
+void PrintCriticalPath(std::vector<Node> nodes){
+
+    std::cout << std::endl;
+    std::cout << "The ciritical path for your network is: ";
+
+    for(Node n : nodes){
+
+        if(n.isCritical == true){
+        
+            std::cout << n.name << " -> ";
+        
+        }
+
+    }
+
+    std::cout << "End" << std::endl;
+
+}
+
+void PrintChart(std::vector<Node> nodes){
+
+    std::cout << "   0  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15" << std::endl;
+
+    for(Node n : nodes){
+
+        std::cout << n.name << "   ";
+
+        for(int i = n.ls; i >= 1; i--){
+
+            std::cout << "   ";
+
+        }
+
+        for (int i = n.duration; i >= 1; i--) {
+
+            std::cout << "---";
+
+        }
+        
+        std::cout << std::endl;
+    
+    }
+
+}
+
 int main(){
 
     std::vector<Node> nodes;
@@ -287,7 +350,11 @@ int main(){
     ForwardPass(nodes);
     BackwardPass(nodes);
 
-    int i = 0;
+    FindCriticalPath(nodes);
+
+    PrintCriticalPath(nodes);
+
+    PrintChart(nodes);
 
     return 0;
 }
